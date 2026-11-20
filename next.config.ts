@@ -3,17 +3,19 @@ import type { NextConfig } from "next";
 const managedHostDefaults = ["https://arena.ai", "https://*.arena.ai", "https://lmarena.ai", "https://*.lmarena.ai", "http://localhost:*", "http://127.0.0.1:"];
 
 const managedPreview = !!process.env.E2B_SANDBOX_ID && process.env.SUNU_ENV !== "production";
-
-const managedPreview = !!process.env.E2B_SANDBOX_ID && process.env.SUNU_ENV !== "production";
 const publicPages = ["/", "/espace-ecole", "/fonctionnalites", "/faq", "/contact", "/ouvrir-espace"];
 const workspacePages = ["/login", "/connexion", "/inscription", "/mot-de-passe-oublie", "/reinitialiser", "/onboarding", "/dashboard", "/journal", "/eleves/:path*", "/synthese", "/fiche-renvoi", "/historique", "/parametres", "/utilisateurs"];
-const ancestors = previewAncestors(process.env.SUNU_PREVIEW_ANCESTORS);
+
+function previewAncestors(additional = "") {
+  const origins = additional.split(/\s+/).filter((origin) => /^https:\/\/[a-z0-9.-]+(?::\d+)?$/i.test(origin));
+  return [...new Set([...managedHostDefaults, ...origins])];
+}
 function policy(frameAncestors: string) {
   return ["default-src 'self'", "base-uri 'self'", "form-action 'self'", `frame-ancestors ${frameAncestors}`, "object-src 'none'", "script-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline'", "img-src 'self' data: blob:", "font-src 'self' data:", "connect-src 'self'", "frame-src 'self' blob:", "media-src 'self' blob:", ...(!managedPreview ? ["upgrade-insecure-requests"] : [])].join("; ");
 }
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  env: { NEXT_PUBLIC_SUNU_PREVIEW_ANCESTORS: managedPreview ? ancestors.join(" ") : "" },
+  env: { NEXT_PUBLIC_SUNU_PREVIEW_ANCESTORS: managedPreview ? previewAncestors(process.env.SUNU_PREVIEW_ANCESTORS).join(" ") : "" },
   images: { formats: ["image/avif", "image/webp"] },
   outputFileTracingIncludes: { "/api/*": ["./supabase.sql"] },
   async headers() {
@@ -28,7 +30,7 @@ const nextConfig: NextConfig = {
       ...publicPages.map((source) => ({ source, headers: [{ key: "Content-Security-Policy", value: policy("'self' https: http://localhost:* http://127.0.0.1:*") }] })),
       // Private HTML is only embeddable by the trusted managed viewer. Every
       // record still requires a real bearer session at the API. Production denies all framing.
-      ...workspacePages.map((source) => ({ source, headers: [{ key: "Content-Security-Policy", value: policy(`'self' ${ancestors.join(" ")}`) }] })),
+      ...workspacePages.map((source) => ({ source, headers: [{ key: "Content-Security-Policy", value: policy(`'self' ${previewAncestors(process.env.SUNU_PREVIEW_ANCESTORS).join(" ")}`) }] })),
       { source: "/api/:path*", headers: [{ key: "X-Frame-Options", value: "DENY" }, { key: "Cache-Control", value: "private, no-store" }] },
     ] : [])];
   },
