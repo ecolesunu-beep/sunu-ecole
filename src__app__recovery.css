@@ -1,0 +1,16 @@
+/* Keep the navigation and viewport still; animate the content inside its gutters. */
+.route-content--enter { animation: none; }
+@keyframes sunu-content-enter { from { opacity: .78; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
+.route-content--enter .app-content > *, .route-content--enter .hero__copy, .route-content--enter .inner-hero__inner { animation: sunu-content-enter .32s ease-out both; }
+.app-content, .app-content .panel, .table-wrap { min-width: 0; }
+/* A delayed JavaScript bundle must never leave a visitor behind the intro. */
+@keyframes sunu-intro-deadline { 0%, 78% { visibility: visible; } 100% { visibility: hidden; pointer-events: none; transform: translateY(-102%); } }
+.intro-screen { animation: sunu-intro-deadline 2.3s ease-in-out forwards; }
+@media (prefers-reduced-motion: reduce) { .intro-screen { display: none; } }
+.secure-launch { min-height: 100svh; display: grid; place-items: center; background: #f4f6f8; padding: 24px; }
+.secure-launch__card { width: min(460px, 100%); background: white; border: 1px solid #e1e8ed; border-radius: 18px; padding: clamp(25px, 5vw, 44px); box-shadow: 0 20px 60px #0b2c4a0d; }
+.secure-launch__icon { display: grid; place-items: center; width: 51px; height: 51px; margin: 37px 0 21px; border-radius: 14px; color: #947000; background: #fff7db; }
+.secure-launch__card h1 { color: #0b2c4a; font: 500 clamp(31px, 5vw, 42px)/1.08 Georgia, serif; letter-spacing: -.045em; margin: 13px 0; }
+.secure-launch__card p { color: #617386; font-size: 14px; line-height: 1.8; margin: 0 0 24px; }
+.secure-launch__card > .text-link { display: flex; width: fit-content; margin-top: 21px; }
+.sunu-script-notice { padding: 14px 20px; background: #fff8df; color: #0b2c4a; font-size: 14px; text-align: center; }
