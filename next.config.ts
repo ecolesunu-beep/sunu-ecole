@@ -15,8 +15,10 @@ function policy(frameAncestors: string) {
 }
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  // CORRECTION ICI : Enable standalone output for Render deployment
+  // CORRECTION 1 : Output standalone pour Render
   output: "standalone",
+  // CORRECTION 2 : Dire à Next.js où est le dossier app
+  srcDir: "./src",
   env: { NEXT_PUBLIC_SUNU_PREVIEW_ANCESTORS: managedPreview ? previewAncestors(process.env.SUNU_PREVIEW_ANCESTORS).join(" ") : "" },
   images: { formats: ["image/avif", "image/webp"] },
   outputFileTracingIncludes: { "/api/*": ["./supabase.sql"] },
