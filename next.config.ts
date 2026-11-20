@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
-import { previewAncestors } from "./src/lib/preview-hosts";
+
+const managedHostDefaults = ["https://arena.ai", "https://*.arena.ai", "https://lmarena.ai", "https://*.lmarena.ai", "http://localhost:*", "http://127.0.0.1:"];
+
+const managedPreview = !!process.env.E2B_SANDBOX_ID && process.env.SUNU_ENV !== "production";
 
 const managedPreview = !!process.env.E2B_SANDBOX_ID && process.env.SUNU_ENV !== "production";
 const publicPages = ["/", "/espace-ecole", "/fonctionnalites", "/faq", "/contact", "/ouvrir-espace"];
